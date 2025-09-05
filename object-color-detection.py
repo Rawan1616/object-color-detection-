@@ -96,11 +96,35 @@ for i, contour in enumerate(contours):
 
     # Label the shape
     cv2.putText(resized, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 2)
-cv2.imshow("shapes", resized)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+
 
 
     
 
 # ////////////////////////////////color detection ////////////////////////////////////
+     # //////////////////////////////// Color detection ////////////////////////////////////
+    mask = np.zeros(grayscale_image.shape, dtype="uint8")
+    cv2.drawContours(mask, [contour], -1, 255, -1)
+
+    mean_val = cv2.mean(resized, mask=mask)[:3]
+    b, g, r = mean_val
+
+    if r > 150 and g < 100 and b < 100:
+        color = "red"
+    elif g > 150 and r < 100 and b < 100:
+        color = "green"
+    elif b > 150 and r < 100 and g < 100:
+        color = "blue"
+    elif r > 150 and g > 150 and b < 100:
+        color = "yellow"
+    else:
+        color = "unknown"
+
+    # Label shape + color
+    cv2.putText(resized, f"{color} {label}", (x, y),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+
+
+cv2.imshow("shapes", resized)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
